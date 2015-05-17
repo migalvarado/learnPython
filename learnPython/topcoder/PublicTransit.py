@@ -75,17 +75,22 @@ def getMaxDistance(s, G, t1, t2, R, C):
     
     distances = [0 for x in range(len(G.keys()))]
     visited = [False for x in range(len(distances))]
-    visited[s[NODE_NUM_INDEX]] = True
     
     q = [(0, s)]
     
     while len(q) > 0:
         (vd, v) = heapq.heappop(q)
+        visited[v[NODE_NUM_INDEX]] = True
         
+        distances[v[NODE_NUM_INDEX]] = vd
+        grid[v[R_INDEX]][v[C_INDEX]] = vd
+        
+        if vd > maxDistance:
+            maxDistance = vd
+            
         neighbors = myG[v]
         
         if len(neighbors) > 0: # Must have neighbors to potentially add to q
-            minDistance = -1
             
             for n in neighbors: # Iterate over neighbors
                 ni = n[NODE_NUM_INDEX]
@@ -96,29 +101,16 @@ def getMaxDistance(s, G, t1, t2, R, C):
                     if n not in (t1, t2):
                         nd += 1
                         
-                    if nd < minDistance or minDistance == -1: # New min distance
-                        m = n
-                        minDistance = nd
-                        
-            if minDistance > -1: # Verify at least one new neighbor found
-                visited[m[NODE_NUM_INDEX]] = True
-                distances[m[NODE_NUM_INDEX]] = minDistance
-                grid[m[R_INDEX]][m[C_INDEX]] = minDistance
-                
-                if minDistance > maxDistance: # Change to new max if applicable
-                    maxDistance = minDistance
-                    
-                # Add the neighbor to the queue
-                heapq.heappush(q, (minDistance, m))
+                    heapq.heappush(q, (nd, n))
 
-    print('Source cell: {}'.format(s))
-    print('Teleporter 1: {}'.format(t1))
-    print('Teleporter 2: {}'.format(t2))
-    for r in range(R):
-        print(grid[r])
-    print()
-    print('Max distance: {}'.format(maxDistance))
-    print()
+#     print('Source cell: {}'.format(s))
+#     print('Teleporter 1: {}'.format(t1))
+#     print('Teleporter 2: {}'.format(t2))
+#     for r in range(R):
+#         print(grid[r])
+#     print()
+#     print('Max distance: {}'.format(maxDistance))
+#     print()
     
     return maxDistance
 
